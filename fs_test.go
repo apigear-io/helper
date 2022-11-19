@@ -1,9 +1,12 @@
 package helper
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestJoin(t *testing.T) {
-	t.Parallel()
 	table := []struct {
 		name     string
 		elements []string
@@ -35,9 +38,7 @@ func TestJoin(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 			actual := Join(test.elements...)
-			if actual != test.expected {
-				t.Errorf("expected %s, got %s", test.expected, actual)
-			}
+			assert.Equal(t, test.expected, actual)
 		})
 	}
 }
@@ -45,37 +46,22 @@ func TestJoin(t *testing.T) {
 func TestRmDir(t *testing.T) {
 	t.Parallel()
 	err := MkDir("a/b/c")
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	err = RmDir("a")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if FileExists("a") {
-		t.Error("expected a to be deleted")
-	}
+	assert.NoError(t, err)
+	exists := FileExists("a")
+	assert.False(t, exists)
 }
 
 func TestWriteFile(t *testing.T) {
-	t.Parallel()
 	fn := "test.txt"
 	err := WriteFile(fn, []byte("hello world"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !FileExists(fn) {
-		t.Errorf("expected %s to exist", fn)
-	}
+	assert.NoError(t, err)
+	exists := FileExists(fn)
+	assert.True(t, exists)
 	data, err := ReadFile(fn)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if string(data) != "hello world" {
-		t.Errorf("expected 'hello world', got %s", data)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, "hello world", string(data))
 	err = RmFile(fn)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 }
