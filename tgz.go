@@ -5,14 +5,12 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 )
 
 // ExtractTarGz extracts a tar.gz file to a destination directory.
 func ExtractTarGz(src, dest string) error {
-	log.Printf("extracting %s to %s", src, dest)
 	r, err := os.Open(src)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %v", err)
@@ -35,10 +33,10 @@ func ExtractTarGz(src, dest string) error {
 		}
 		if hdr.Typeflag == tar.TypeReg {
 			tf, err := os.Create(fmt.Sprintf("%s/%s", dest, hdr.Name))
-			defer tf.Close()
 			if err != nil {
 				return fmt.Errorf("failed to create file: %v", err)
 			}
+			defer tf.Close()
 			_, err = io.Copy(tf, tr)
 			if err != nil {
 				return fmt.Errorf("failed to copy file: %v", err)
@@ -50,7 +48,6 @@ func ExtractTarGz(src, dest string) error {
 
 // CreateTarGz creates a tar.gz file from a source directory.
 func CreateTarGz(src, dst string) error {
-	log.Printf("creating %s from %s", dst, src)
 	f, err := os.Create(dst)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %v", err)
