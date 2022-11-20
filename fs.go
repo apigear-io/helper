@@ -134,6 +134,7 @@ func FindFile(src string, name string) (fs.FileInfo, error) {
 	return found, nil
 }
 
+// FilterDir returns a list of files in a directory that match filter
 func FilterDir(src string, filter func(fs.DirEntry) bool) ([]fs.DirEntry, error) {
 	entries, err := os.ReadDir(src)
 	if err != nil {
@@ -141,6 +142,9 @@ func FilterDir(src string, filter func(fs.DirEntry) bool) ([]fs.DirEntry, error)
 	}
 	var filtered []fs.DirEntry
 	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
 		if filter(entry) {
 			filtered = append(filtered, entry)
 		}
@@ -148,6 +152,12 @@ func FilterDir(src string, filter func(fs.DirEntry) bool) ([]fs.DirEntry, error)
 	return filtered, nil
 }
 
+// RmFile removes a file.
 func RmFile(src string) error {
 	return os.Remove(src)
+}
+
+// Rename renames a file or directory.
+func Rename(src, dst string) error {
+	return os.Rename(src, dst)
 }
