@@ -57,7 +57,7 @@ func CreateTarGz(src, dst string) error {
 	defer gw.Close()
 	tw := tar.NewWriter(gw)
 	defer tw.Close()
-	filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -81,5 +81,4 @@ func CreateTarGz(src, dst string) error {
 		}
 		return nil
 	})
-	return nil
 }

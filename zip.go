@@ -23,7 +23,10 @@ func ExtractZipFile(zipFile string, dest string) error {
 		defer rc.Close()
 		path := filepath.Join(dest, f.Name)
 		if f.FileInfo().IsDir() {
-			os.MkdirAll(path, f.Mode())
+			err := os.MkdirAll(path, f.Mode())
+			if err != nil {
+				return err
+			}
 		} else {
 			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 			if err != nil {
@@ -56,7 +59,7 @@ func CreateZipFromDir(src, dst string) error {
 	if info.IsDir() {
 		baseDir = filepath.Base(src)
 	}
-	filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -87,5 +90,4 @@ func CreateZipFromDir(src, dst string) error {
 		_, err = io.Copy(writer, file)
 		return err
 	})
-	return nil
 }
