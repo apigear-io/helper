@@ -21,6 +21,10 @@ func Join(elem ...string) string {
 	return filepath.Join(elem...)
 }
 
+func BaseName(src string) string {
+	return filepath.Base(src)
+}
+
 func RmDir(src string) error {
 	return os.RemoveAll(src)
 }
@@ -160,4 +164,8 @@ func RmFile(src string) error {
 // Rename renames a file or directory.
 func Rename(src, dst string) error {
 	return os.Rename(src, dst)
+}
+
+func RelativePath(base, target string) (string, error) {
+	return filepath.Rel(base, target)
 }
